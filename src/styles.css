@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    font-family: monospace;
+}
+
+.mem-container > div {
+  border: 1px solid lightgray;
+  display: inline-block;
+  margin-right: -1px;
+  padding: 1px;
+  min-height: 1em;
+  min-width: .5em;
+}
+
+.mem-container > div.ptr {
+  background-color: rgb(20,20,20);
+  color: white;
+}
+
+.mem-container > div.isZero {
+  /* background-color: rgb(20,20,20); */
+  color: gray;
+}

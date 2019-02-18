@@ -1,0 +1,24 @@
+BrainFvck Code
+<textarea [(ngModel)]="bfCode" (ngModelChange)="initialize()" [disabled]="running"></textarea>
+Step Delay <input [(ngModel)]="stepDelay"> ms.&nbsp;
+<button (click)="restart">Restart</button>&nbsp;
+<button (click)="continue">Continue</button>&nbsp;
+<button (click)="pause">Pause</button>&nbsp;
+<button (click)="stop">Stop</button>
+<div>
+  <div>Instruction</div>
+  <div class="mem-container">
+    <div *ngFor="let inst of instructions; let ip = index" [class.ptr]="ip===instPtr">
+      {{inst}}
+    </div>
+  </div>
+</div>
+
+<div>
+    <div>Data</div>
+    <div class="mem-container">
+      <div *ngFor="let dat of data; let dp = index" [class.ptr]="dp===dataPtr" [class.isZero]="dat===0">
+        {{dat}}
+      </div>
+    </div>
+  </div>
