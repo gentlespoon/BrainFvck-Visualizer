@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { bfVm } from './bfvm';
+import { V4MAPPED } from 'dns';
 
 @Component({
   selector: 'app-bfvslzr',
@@ -10,22 +12,33 @@ export class BfvslzrComponent implements OnInit {
   bfCode = '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.';
   stepDelay = 600;
 
-  running = false;
-
-  data: number[];
-  instructions: string[];
-
-  instPtr: 0; // instruction pointer = 0
-  dataPtr: 0; // data pointer = 0
+  vm: bfVm;
 
   initialize() {
-    this.running = false;
-    this.instructions = this.bfCode.split('');
-    console.log(this.instructions);
-    this.data = (new Array(10)).fill(0);
-    this.instPtr = 0;
-    this.dataPtr = 0;
+    this.vm = new bfVm(this.bfCode);
   }
+
+  start() {
+    this.vm.init();
+    this.vm.status = 1;
+    this.vm.next();
+  }
+
+  continue() {
+    if (this.vm.status === 0) {
+      this.vm.status = 1;
+      this.vm.next();
+    }
+  }
+
+  pause() {
+    this.vm.status = 0;
+  }
+
+  stop() {
+    this.vm.status = -1;
+  }
+
 
   constructor() { }
 
