@@ -3,12 +3,12 @@ export class bfVm {
   constructor(bfCode) {
     this.bfCode = bfCode;
     this.instructions = this.prepare(this.bfCode); // syntax check
-    this.delay = 500;
+    this.delay = 50;
     this.init();
   }
 
   bfCode: string;
-  status: number; // 1: running; 0: stopped; -1: error;
+  status: number; // 1: running; 0: stopped; -1: error/stop/end;
   
   data: number[];
   instructions: string[];
@@ -19,6 +19,7 @@ export class bfVm {
   currentLoopStart: number[]; // loop start tracking stack
   
   output: string;
+  input: string;
 
   delay: number;
 
@@ -29,6 +30,7 @@ export class bfVm {
     this.instructionPointer = 0;
     this.currentLoopStart = [];
     this.output = '';
+    this.input = '';
   }
 
   // syntax check, mainly for checking [] balancing
@@ -38,12 +40,27 @@ export class bfVm {
     // if empty bfCode
     if (!bfCode.length) return [];
     // tokenize
-    var inst = bfCode.split('');
+    var inst = [];
     var stack = [];
-    for (let i of inst) {
-      if (i==='[') stack.push(i);
-      else if (i===']') {
-        if (!stack.pop()) throw('Unbalanced []');
+    for (let i of bfCode) {
+      switch(i) {
+        case '[':
+          stack.push(i);
+          inst.push(i);
+          break;
+        case ']':
+          if (!stack.pop()) throw('Unbalanced []');
+          inst.push(i);
+          break;
+        case '<':
+        case '>':
+        case '+':
+        case '-':
+        case ',':
+        case '.':
+          inst.push(i);
+          break;
+        default:
       }
     }
     if (stack.length) throw('Unbalanced []');
@@ -54,7 +71,9 @@ export class bfVm {
   // next instruction
   next() {
     if (this.status !== 1) return;
-    console.log(this.instructions[this.instructionPointer]);
+    if (this.instructionPointer === this.instructions.length) {
+      this.status = -1; return;
+    }
     switch (this.instructions[this.instructionPointer]) {
       case '>': this.dataPointerRight(); break;
       case '<': this.dataPointerLeft(); break;
@@ -66,7 +85,7 @@ export class bfVm {
       case ',': this.dataInput(0); break;
       default:
         this.status = -1;
-        throw 'Unrecognized token ' + this.instructions[this.instructionPointer];
+        alert('Unrecognized token ' + this.instructions[this.instructionPointer]);
     }
     this.instructionPointer++;
     console.log(this.dataPointer, this.instructionPointer, this.currentLoopStart);
@@ -89,7 +108,7 @@ export class bfVm {
   dataPointerLeft() {
     if (this.dataPointer === 0) {
       this.status = -1;
-      throw('Data Pointer moving out of bound!');
+      alert('Data Pointer moving out of bound!');
     }
     this.dataPointer--;
   }
@@ -97,33 +116,49 @@ export class bfVm {
   // "+"
   dataIncrement() {
     if (this.data[this.dataPointer] === 255) {
-      console.warn('Overflowing data at address ' + this.dataPointer.toString(16) + '.');
+      alert('Overflowing data at address ' + this.dataPointer.toString(16) + '.');
+      this.data[this.dataPointer]=-1;
     }
     this.data[this.dataPointer]++;
   }
   // "-"
   dataDecrement() {
     if (this.data[this.dataPointer] === 0) {
-      console.warn('Underflowing data at address ' + this.dataPointer.toString(16) + '.');
+      alert('Underflowing data at address ' + this.dataPointer.toString(16) + '.');
+      this.data[this.dataPointer]=256;
     }
     this.data[this.dataPointer]--;
   }
 
   // "."
   dataOutput() {
-    this.output += this.data[this.dataPointer];
+    this.output += String.fromCharCode(this.data[this.dataPointer]);
   }
   // ","
   dataInput(char: number) {
-    this.data[this.dataPointer] = char;
+    if (!this.input.length) {
+      // if nothing in input box, pause and wait for input.
+      this.status = 0;
+      // because when execution of this inst ends, iP will ++;
+      // iP -- to re execute this inst.
+      this.instructionPointer--;
+      alert('Waiting for input');
+    } else {
+      let t = this.input.split('');
+      this.data[this.dataPointer] = t[0].charCodeAt(0);
+      delete(t[0]);
+      this.input = t.join('');
+    }
   }
 
   // "["
   loopStart() {
-    this.currentLoopStart.push(this.instructionPointer); 
     if (this.data[this.dataPointer] === 0) {
       // jump to next ]
       this.instructionPointer = this.instructions.indexOf(']', this.instructionPointer);
+    } else {
+      // enter loop body
+      this.currentLoopStart.push(this.instructionPointer); 
     }
   }
   // "]"
@@ -131,7 +166,7 @@ export class bfVm {
     if (this.data[this.dataPointer] !== 0) {
       this.instructionPointer = this.currentLoopStart[this.currentLoopStart.length-1];
     } else {
-      this.instructionPointer = this.currentLoopStart.pop();
+      this.currentLoopStart.pop();
     }
   }
 

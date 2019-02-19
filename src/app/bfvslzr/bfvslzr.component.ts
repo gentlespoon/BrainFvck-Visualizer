@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { bfVm } from './bfvm';
-import { V4MAPPED } from 'dns';
 
 @Component({
   selector: 'app-bfvslzr',
@@ -10,7 +9,6 @@ import { V4MAPPED } from 'dns';
 export class BfvslzrComponent implements OnInit {
 
   bfCode = '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.';
-  stepDelay = 600;
 
   vm: bfVm;
 

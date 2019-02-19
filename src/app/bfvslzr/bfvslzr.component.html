@@ -1,10 +1,17 @@
+<h2>BrainFuck Visualizer</h2>
+
+<h5>By GentleSpoon, 2019-02-18.</h5>
+<h5>Source available on <a href="https://github.com/gentlespoon/BrainFvck-Visualizer" target="_blank">GitHub</a>.</h5>
+
 BrainFvck Code
-<textarea [(ngModel)]="bfCode" (ngModelChange)="initialize()" [disabled]="running"></textarea>
+<textarea [(ngModel)]="bfCode" (ngModelChange)="initialize()" [disabled]="vm.status>0"></textarea>
 Step Delay <input [(ngModel)]="vm.delay"> ms.&nbsp;
 <button (click)="start()">Start</button>&nbsp;
 <button (click)="continue()">Continue</button>&nbsp;
 <button (click)="pause()">Pause</button>&nbsp;
 <button (click)="stop()">Stop</button>
+<br>
+<br>
 <div>
   <div>Instruction</div>
   <div class="mem-container">
@@ -13,12 +20,28 @@ Step Delay <input [(ngModel)]="vm.delay"> ms.&nbsp;
     </div>
   </div>
 </div>
-
+<br>
+<br>
 <div>
-    <div>Data</div>
-    <div class="mem-container">
-      <div *ngFor="let dat of vm.data; let dp = index" [class.ptr]="dp===vm.dataPointer" [class.isZero]="dat===0">
-        {{dat}}
-      </div>
+  <div>Data</div>
+  <div class="mem-container">
+    <div *ngFor="let dat of vm.data; let dp = index" [class.ptr]="dp===vm.dataPointer" [class.isZero]="dat===0">
+      {{dat}}
     </div>
   </div>
+</div>
+<br>
+<br>
+<div>
+    <div>Input</div>
+    <div class="mem-container">
+      <input [(ngModel)]="vm.input">
+    </div>
+  </div>
+
+<div>
+  <div>Output</div>
+  <div class="mem-container">
+    {{vm.output}}
+  </div>
+</div>
