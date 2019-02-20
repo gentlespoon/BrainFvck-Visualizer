@@ -3,7 +3,7 @@ export class bfVm {
   constructor(bfCode) {
     this.bfCode = bfCode;
     this.instructions = this.prepare(this.bfCode); // syntax check
-    this.delay = 50;
+    this.delay = 25;
     this.init();
   }
 
@@ -17,6 +17,8 @@ export class bfVm {
   instructionPointer: number;
   
   currentLoopStart: number[]; // loop start tracking stack
+
+  alertOnOverflow = false;
   
   output: string;
   input: string;
@@ -37,6 +39,7 @@ export class bfVm {
   //     striped down version of balanced parentheses check,
   //     from my https://github.com/gentlespoon/LeetCode-Solutions/blob/master/020_Valid-Parentheses.js
   prepare(bfCode: string) : string[] {
+    this.instructions = [];
     // if empty bfCode
     if (!bfCode.length) return [];
     // tokenize
@@ -49,7 +52,7 @@ export class bfVm {
           inst.push(i);
           break;
         case ']':
-          if (!stack.pop()) throw('Unbalanced []');
+          if (!stack.pop()) { alert('Unbalanced []'); return };
           inst.push(i);
           break;
         case '<':
@@ -63,7 +66,7 @@ export class bfVm {
         default:
       }
     }
-    if (stack.length) throw('Unbalanced []');
+    if (stack.length) { alert('Unbalanced []'); return };
     return inst;
   }
 
@@ -108,7 +111,7 @@ export class bfVm {
   dataPointerLeft() {
     if (this.dataPointer === 0) {
       this.status = -1;
-      alert('Data Pointer moving out of bound!');
+      alert('Error when executing instruction at ' + this.instructionPointer.toString(16).padStart(4, '0') + ': Data Pointer is already at 0x0000 but still tries to move downward.');
     }
     this.dataPointer--;
   }
@@ -116,7 +119,9 @@ export class bfVm {
   // "+"
   dataIncrement() {
     if (this.data[this.dataPointer] === 255) {
-      alert('Overflowing data at address ' + this.dataPointer.toString(16) + '.');
+      let msg = 'Instruction at ' + this.instructionPointer.toString(16).padStart(4, '0') + ' overflows data at 0x' + this.dataPointer.toString(16).padStart(4, '0') + '.';
+      if (this.alertOnOverflow) alert(msg);
+      console.warn(msg)
       this.data[this.dataPointer]=-1;
     }
     this.data[this.dataPointer]++;
@@ -124,7 +129,9 @@ export class bfVm {
   // "-"
   dataDecrement() {
     if (this.data[this.dataPointer] === 0) {
-      alert('Underflowing data at address ' + this.dataPointer.toString(16) + '.');
+      let msg = 'Instruction at ' + this.instructionPointer.toString(16).padStart(4, '0') + ' underflows data at 0x' + this.dataPointer.toString(16).padStart(4, '0') + '.';
+      if (this.alertOnOverflow) alert(msg);
+      console.warn(msg)
       this.data[this.dataPointer]=256;
     }
     this.data[this.dataPointer]--;

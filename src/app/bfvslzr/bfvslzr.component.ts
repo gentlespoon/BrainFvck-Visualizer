@@ -22,15 +22,15 @@ export class BfvslzrComponent implements OnInit {
     this.vm.next();
   }
 
-  continue() {
-    if (this.vm.status === 0) {
-      this.vm.status = 1;
-      this.vm.next();
-    }
-  }
-
   pause() {
-    this.vm.status = 0;
+    switch (this.vm.status) {
+      case 0:
+        this.vm.status = 1;
+        this.vm.next();
+        break;
+      case 1:
+        this.vm.status = 0; 
+    }
   }
 
   stop() {

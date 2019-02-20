@@ -5,39 +5,46 @@
 
 BrainFvck Code
 <textarea [(ngModel)]="bfCode" (ngModelChange)="initialize()" [disabled]="vm.status>0"></textarea>
-Step Delay <input [(ngModel)]="vm.delay"> ms.&nbsp;
-<button (click)="start()">Start</button>&nbsp;
-<button (click)="continue()">Continue</button>&nbsp;
-<button (click)="pause()">Pause</button>&nbsp;
-<button (click)="stop()">Stop</button>
+<span>Sample test code can be found <a href="https://github.com/gentlespoon/BrainFvck-Visualizer/tree/master/test" target="_blank">here</a>. Rights reserved by their original authors.</span>
 <br>
 <br>
+
+<div class="controls">
+  Step Delay <input [(ngModel)]="vm.delay"> ms.&nbsp;<br>
+  <input type="checkbox" [(ngModel)]="vm.alertOnOverflow">Alert on Overflow (Use with caution. This may hang your browser.)<br>
+  <button (click)="start()" [disabled]="vm.status===1"><i class="fas fa-play"></i> Start/Restart</button>&nbsp;
+  <button (click)="pause()" [disabled]="vm.status===-1"><i class="fas fa-pause"></i> Pause/Continue</button>&nbsp;
+  <button (click)="stop()" [disabled]="vm.status===-1"><i class="fas fa-stop"></i> Stop</button>
+</div>
+<br>
+
 <div>
-  <div>Instruction</div>
+  <div>Instruction Memory (Hover for memory address)</div>
   <div class="mem-container">
-    <div *ngFor="let inst of vm.instructions; let ip = index" [class.ptr]="ip===vm.instructionPointer">
+    <div *ngFor="let inst of vm.instructions; let ip = index" [class.ptr]="ip===vm.instructionPointer" title="0x{{ip.toString(16).padStart(4, '0')}}">
       {{inst}}
     </div>
   </div>
 </div>
 <br>
-<br>
+
 <div>
-  <div>Data</div>
+  <div>Data Memory (Hover for memory address)</div>
   <div class="mem-container">
-    <div *ngFor="let dat of vm.data; let dp = index" [class.ptr]="dp===vm.dataPointer" [class.isZero]="dat===0">
+    <div *ngFor="let dat of vm.data; let dp = index" [class.ptr]="dp===vm.dataPointer" [class.isZero]="dat===0" title="0x{{dp.toString(16).padStart(4, '0')}}">
       {{dat}}
     </div>
   </div>
 </div>
 <br>
-<br>
+
 <div>
   <div><strong>Input</strong></div>
   <div class="mem-container">
     <input [(ngModel)]="vm.input">
   </div>
 </div>
+<br>
 
 <div>
   <div><strong>Output</strong></div>

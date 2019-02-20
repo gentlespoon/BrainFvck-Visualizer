@@ -1,0 +1,2 @@
+This program takes one char input and prints it
+,.
