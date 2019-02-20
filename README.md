@@ -1,5 +1,7 @@
 # Brainfuck Visualizer
-Javascript Brainfuck Interpreter + Visualizer
+An interpreter and real-time visualizer for the BrainFuck programming language, with 8-bit overflow and underflow detection.
+
+Made with Angular.
 
 ## Demo
 https://brainfuck.gentlespoon.com
